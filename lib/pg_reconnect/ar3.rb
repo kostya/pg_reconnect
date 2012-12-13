@@ -10,18 +10,18 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     res
   rescue ActiveRecord::StatementInvalid => ex
     unless active?        
-      reconnect! rescue nil
-
       @retry_counter ||= 0
       @logger.warn "Reconnecting to database after PGError! Try ##{@retry_counter + 1}/#{MAX_QUERY_RETRIES} #{ex.message}, trace: #{ex.backtrace.inspect}"
 
       if @retry_counter < MAX_QUERY_RETRIES
         @retry_counter += 1
+        reconnect! rescue nil
         retry
       end
     end
     
+    @retry_counter = 0
     raise
   end
-  
+
 end

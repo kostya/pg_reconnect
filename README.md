@@ -1,6 +1,7 @@
 # PgReconnect
 
-ActiveRecord PostgreSql auto-reconnection, works with 2.3 and 3.2 rails.
+ActiveRecord PostgreSQL auto-reconnection, works with 2.3 and 3.2 rails.
+Uses hackety wrapper on adapter execute.
 
 ## Installation
 

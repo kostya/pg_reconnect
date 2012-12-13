@@ -10,17 +10,18 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     @retry_counter = nil
     res
   rescue ActiveRecord::StatementInvalid => ex
-    unless active?
+    unless active?     
       @retry_counter ||= 0
       @logger.warn "Reconnecting to database after PGError! Try ##{@retry_counter + 1}/#{MAX_QUERY_RETRIES} #{ex.message}, trace: #{ex.backtrace.inspect}"
-      reconnect! rescue nil
 
       if @retry_counter < MAX_QUERY_RETRIES
         @retry_counter += 1
+        reconnect! rescue nil # to prevent error PG::Error: invalid encoding name: utf8
         retry
       end
     end
-    
+
+    @retry_counter = 0
     raise
   end
 
@@ -32,14 +33,15 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     unless active?
       @retry_counter ||= 0
       @logger.warn "Reconnecting to database after PGError! Try ##{@retry_counter + 1}/#{MAX_QUERY_RETRIES} #{ex.message}, trace: #{ex.backtrace.inspect}"
-      reconnect! rescue nil
 
       if @retry_counter < MAX_QUERY_RETRIES
         @retry_counter += 1
+        reconnect! rescue nil # to prevent error PG::Error: invalid encoding name: utf8
         retry
       end
     end
-    
+
+    @retry_counter = 0    
     raise
   end
 
