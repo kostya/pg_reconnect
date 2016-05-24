@@ -16,7 +16,7 @@ class ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
       if @retry_counter < MAX_QUERY_RETRIES
         @retry_counter += 1
         reconnect! rescue nil
-        retry
+        retry if active?
       end
     end
     
